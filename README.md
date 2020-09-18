@@ -5,7 +5,7 @@ Sử dụng bộ dataset của [VQA] (https://visualqa.org/)
 
 Sử dụng câu lệnh để download bộ dữ liệu: 
 
-
+    chmod +x download.sh
     ./download.sh
     
 Chuyển dữ liệu từ tiếng anh sang Tiếng Viêt:
