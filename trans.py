@@ -89,9 +89,9 @@ class Translate_data:
                 
                 annotation = {
                     "question_id" : data['annotations'][i]['question_id'],
-                    "image_id" : data['annotations'][i]['image_id']
-                    "question_type" : data['annotations'][i]['question_type']
-                    "answer_type" : data['annotations'][i]['answer_type']
+                    "image_id" : data['annotations'][i]['image_id'],
+                    "question_type" : data['annotations'][i]['question_type'],
+                    "answer_type" : data['annotations'][i]['answer_type'],
                     "answers" : [],
                     "multiple_choice_answer" : None,
                 }
