@@ -144,3 +144,7 @@ class Translate_data:
             
         
         
+if __name__ == "__main__":
+    
+    app = Translate_data()
+    app.translate()
