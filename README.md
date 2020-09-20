@@ -34,9 +34,9 @@ Chạy lệnh để dịch dữ liệu:
         
 
 ## Model
-Project đang hướng tới việc áp dụng 2 model là MCAN (https://arxiv.org/abs/1906.10770) và Oscar (https://arxiv.org/abs/2004.06165).
+Project đang hướng tới việc áp dụng 2 model là **MCAN** (https://arxiv.org/abs/1906.10770) và **Oscar** (https://arxiv.org/abs/2004.06165).
 
 ## Tiền xử lý dữ liệu.
-* Hình ảnh: Sử dụng phương pháp Bottom up attention (https://arxiv.org/pdf/1707.07998.pdf).
-* Text: Sử dụng các phương pháp như Word2Vec, Fasttext, ...
+* Hình ảnh: Sử dụng phương pháp **Bottom up attention** (https://arxiv.org/pdf/1707.07998.pdf).
+* Text: Sử dụng các phương pháp như **Word2Vec**, **Fasttext**, ...
 
