@@ -2,10 +2,13 @@ import torch.nn.functional as F
 import torch.nn as nn
 import torch
 import math
+import sys
 
-from src.core import BaseAdapter
-from src.core.utils import *
-from src.core.ops import *
+sys.path.append('../')
+
+from core import BaseAdapter
+from core.utils import *
+from core.ops import *
 
 
 class MCANAdapter(BaseAdapter):
@@ -238,12 +241,9 @@ class MCAN(nn.Module):
             batch_first = True
         )
         
-        self.img_feat_linear = nn.Linear(
-            in_features = __C.IMG_FEAT_SIZE,
-            out_features = __C.HIDDEN_SIZE
-        )
-        
+        self.adapter = MCANAdapter(__C)
         self.backbone = MCA_ED(__C)
+        
         self.attention_flatten_img = AttentionFlatten(__C)
         self.attention_flatten_text = AttentionFlatten(__C) 
         
@@ -253,7 +253,34 @@ class MCAN(nn.Module):
             out_features = __C.answer_size
         )   
         
-    def forward(self, img_feat, ques_ix):
+    def forward(self, frcn_feat, grid_feat, bbox_feat, ques_ix):
         
-        pass     
+        lang_feat_mask = make_mask(ques_ix.unsqueeze(2))
+        lang_feat = self.embedding(ques_ix)
+        lang_feat, _ = self.lstm(lang_feat)
+        
+        img_feat, img_feat_mask = self.adapter(frcn_feat, grid_feat, bbox_feat)
+        
+        lang_feat, img_feat = self.backbone(
+            y = lang_feat,
+            x = img_feat,
+            y_mask = lang_feat_mask,
+            x_mask = img_feat_mask
+        )
+        
+        lang_feat = self.attention_flatten_text(
+            x = lang_feat,
+            x_mask = lang_feat_mask
+        )
+        
+        img_feat = self.attention_flatten_img(
+            x = img_feat,
+            x_mask = img_feat_mask
+        )
+        
+        proj_feat = lang_feat + img_feat
+        proj_feat = self.proj_norm(proj_feat)
+        proj_feat = self.proj(proj_feat)
+        
+        return proj_feat
     
