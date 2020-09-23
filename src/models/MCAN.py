@@ -1,68 +1,42 @@
+import torch.nn.functional as F
+import torch.nn as nn
+import torch
+import math
 
-__all__ = ['FC', 'MLP', 'LayerNorm', 'MCA_ED']
-
-import torch 
-import torch.optim as Optim
-import torch.nn as nn 
-import torch.nn.functional as F 
-import math 
+from src.core import BaseAdapter
+from src.core.utils import *
+from src.core.ops import *
 
 
-class FC(nn.Module):
-    """
-    Fully Connected
-    """
+class MCANAdapter(BaseAdapter):
     
-    def __init__(self, in_size, out_size, dropout_r = 0., use_relu = True):
-        super(FC, self).__init__()
-        self.dropout_r = dropout_r
-        self.use_relu = use_relu
+    def __init__(self, __C):
+        super(MCANAdapter, self).__init__(__C)
+        self.__C = __C
+    
+    
+    def bbox_proc(self, bbox):
+        area = (bbox[:, :, 2] - bbox[:, :, 0]) * (bbox[:, :, 3] - bbox[:, :, 1])
+        return torch.cat((bbox, area.unsqueeze(2)), -1)
         
-        self.linear  = nn.Linear(in_size, out_size)
+    def dataset_init(self, __C):
+        imgfeat_linear_size = __C.FEAT_SIZE['FRCM_FEAT_SIZE'][1]
+        if __C.USE_BBOX_FEAT:
+            self.bbox_linear = nn.Linear(5, __C.BBOXFEAT_EMB_SIZE)
+            imgfeat_linear_size += __C.BBOXFEAT_EMB_SIZE
+        self.frcn_linear = nn.Linear(imgfeat_linear_size, __C.HIDDEN_SIZE)
         
-        if self.use_relu:
-            self.relu = nn.ReLU(inplace=True)
-        if dropout_r > 0:
-            self.dropout= nn.Dropout(dropout_r)
-            
-    
-    def forward(self, x):
+    def dataset_forward(self, feat_dict):
+        frcn_feat = feat_dict['FastRCNN_FEAT']
+        bbox_feat = feat_dict['BBOX_FEAT']
         
-        x = self.linear(x)
-        if self.relu:
-            x = self.relu(x)
-        if self.dropout_r > 0:
-            x = self.dropout(x)
-        return x
-    
-class MLP(nn.Module):
-    """
-    Multi-layers Perceptrons
-    """
-    def __init__(self, in_size, hid_size, out_size, dropout_r = 0., use_relu = True):
-        super(MLP, self).__init__()
-        self.fc = FC(in_size, hid_size, dropout_r = dropout_r, use_relu = use_relu)
-        self.linear = nn.Linear(hid_size, out_size)
-    
-    def forward(self, x):
-        x = self.fc(x)
-        x = self.linear(x)
-        return x
-    
-class LayerNorm(nn.Module):
-    
-    def __init__(self, size, eps = 1e-6):
-        super(LayerNorm, self).__init__()
-        self.eps = eps 
-        self.a_2 = nn.Parameter(torch.ones(size))
-        self.b_2 = nn.Parameter(torch.zeros(size))
-        
-    def forward(self, x):
-        mean = x.mean(-1, keepdim = True)
-        std  = x.std(-1, keepdim = True)
-        
-        return self.a_2 * (x - mean) / (std + self.eps) + self.b_2
-    
+        img_feat_mask = make_mask(frcn_feat)
+        if self.__C.USE_BBOX_FEAT:
+            bbox_feat = self.bbox_proc(bbox_feat)
+            bbox_feat = self.bbox_linear(bbox_feat)
+            frcn_feat = torch.cat((frcn_feat, bbox_feat), dim = -1)
+        img_feat = self.frcn_linear(frcn_feat)
+        return img_feat, img_feat_mask        
     
 class MultiHeadAtt(nn.Module):
     """Multi-Head Attention""" 
@@ -201,69 +175,85 @@ class MCA_ED(nn.Module):
         self.encoder_list = nn.ModuleList([SelfAttention(__C) for _ in range(__C.LAYER)])
         self.decoder_list = nn.ModuleList([SelfGuildedAttention(__C) for _ in range(__C.LAYER)])
         
-    def forward(self, x, y, x_mask, y_mask):
+    def forward(self, y, x, y_mask, x_mask):
         
         for e in self.encoder_list:
-            x = e(x, x_mask)
+            y = e(y, y_mask)
         
         for d in self.decoder_list:
-            y = d(y, x, y_mask, x_mask)
+            x = d(x, y, x_mask, y_mask)
         
         return x, y
     
-    
-class WarmupOptimizer:
-    
-    def __init__(self, lr_base, optimizer, data_size, batch_size):
+
+class AttentionFlatten(nn.Module):
+
+    def __init__(self, __C):
+        super(AttentionFlatten, self).__init__()
+        self.__C = __C
         
-        self.optimizer = optimizer
-        self._step = 0
-        self.lr_base = lr_base
-        self._rate = 0
-        self.data_size = data_size
-        self.batch_size = batch_size
+        self.mlp = MLP(
+            in_size = self.__C.HIDDEN_SIZE, 
+            hid_size = self.__C.FLAT_MLP_SIZE,
+            out_size = self.__C.FLAT_GLIMPSES,
+            dropout_r = self.__C.DROPOUT_R
+        )
         
-    def rate(self, step = None):
-        if step is None:
-            step = self._step
-            
-        if step <= int(self.data_size / self.batch_size * 1):
-            r = self.lr_base * 1. / 4
-        elif step <= int(self.data_size / self.batch_size * 2):
-            r = self.lr_base * 2. / 4
-        elif step <= int(self.data_size / self.batch_size * 3):
-            r = self.lr_base * 3. / 4
-        else:
-            r = self.lr_base
-        return r
+        self.linear_merge = nn.Linear(
+            self.__C.HIDDEN_SIZE * self.__C.FLAT_GLIMPSES,
+            self.__C.FLAT_OUT_SIZE
+        )
         
-    def step(self):
+    def forward(self, x, x_mask):
+        attention = self.mlp(x)
+        attention = attention.masked_fill(
+            x_mask.squeeze(1).squeeze(1).unsqueeze(2),
+            -1e9
+        )
         
-        self._step += 1 
-        rate = self.rate()
-        for p in self.optimizer.param_groups:
-            p['lr'] = rate
-        self._rate = rate
-        self.optimizer.step()
+        attention = F.softmax(attention, dim = 1)
+        attention_list = []
+        for i in range(self.__C.FLAT_GLIMPSES):
+            attention_list.append(torch.sum(attention[:, :, i: i + 1] * x, dim =1))
+        x_attention = torch.cat(attention_list, dim = 1)
+        x_attention = self.linear_merge(x_attention)
+        return x_attention
     
-    def zero_grad(self):
-        self.optimizer.zero_grad()
+    
+class MCAN(nn.Module):
+    
+    def __init__(self, __C, pretrained_emb, token_size, answer_size):
+        super(MCAN, self).__init__()
+        self.embedding = nn.Embedding(
+            num_embeddings = token_size,
+            embedding_dim  = __C.WORD_EMBED_SIZE
+        )
         
-def get_optimizer(__C, model, data_size, lr_base = None):
-    if lr_base is None:
-        lr_base = __C.LR_BASE
+        if __C.USE_GLOVE:
+            self.embedding.weight.data.copy_(torch.from_numpy(pretrained_emb))
+        self.lstm = nn.LSTM(
+            input_size = __C.WORD_EMBED_SIZE,
+            hidden_size = __C.HIDDEN_SIZE, 
+            num_layers = 1,
+            batch_first = True
+        )
+        
+        self.img_feat_linear = nn.Linear(
+            in_features = __C.IMG_FEAT_SIZE,
+            out_features = __C.HIDDEN_SIZE
+        )
+        
+        self.backbone = MCA_ED(__C)
+        self.attention_flatten_img = AttentionFlatten(__C)
+        self.attention_flatten_text = AttentionFlatten(__C) 
+        
+        self.proj_norm = LayerNorm(__C.FLAT_OUT_SIZE)
+        self.proj      = nn.Linear(
+            in_features = __C.FLAT_OUT_SIZE,
+            out_features = __C.answer_size
+        )   
+        
+    def forward(self, img_feat, ques_ix):
+        
+        pass     
     
-    return WarmupOptimizer(
-        lr_base = lr_base,
-        optimizer= Optim.Adam(
-            filter(lambda p: p.requires_grad, model.parameters()),
-            lr = 0,
-            betas = __C.OPT_BETAS,
-            eps = __C.OPT_EPS
-        ),
-        data_size = data_size,
-        batch_size = __C.BATCH_SIZE
-    )
-    
-def adjust_lr(optimizer, decay_r):
-    optimizer.lr_base *= decay_r
