@@ -1,14 +1,18 @@
+
+
 import torch.nn.functional as F
 import torch.nn as nn
 import torch
 import math
 import sys
+import os
 
-sys.path.append('../')
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(CURRENT_DIR))
 
-from core import BaseAdapter
-from core.utils import *
-from core.ops import *
+from core.BaseAdapter import BaseAdapter
+from core.utils import make_mask, feat_filter
+from core.ops import FC, LayerNorm, MLP
 
 
 class MCANAdapter(BaseAdapter):
