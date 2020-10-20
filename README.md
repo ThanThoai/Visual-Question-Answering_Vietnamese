@@ -1,4 +1,4 @@
-# Visual-Question-Answering_Vietnamese
+<!-- # Visual-Question-Answering_Vietnamese
 
 ## Dataset
 Sử dụng bộ dataset của [VQA] (https://visualqa.org/)
@@ -39,4 +39,6 @@ Project đang hướng tới việc áp dụng 2 model là **MCAN** (https://arx
 ## Tiền xử lý dữ liệu.
 * Hình ảnh: Sử dụng phương pháp **Bottom up attention** (https://arxiv.org/pdf/1707.07998.pdf).
 * Text: Sử dụng các phương pháp như **Word2Vec**, **Fasttext**, ...
+ -->
 
+### Comming soon ..........
