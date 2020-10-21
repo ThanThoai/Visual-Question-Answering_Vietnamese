@@ -9,17 +9,17 @@ comma_strip = re.compile("(\d)(\,)(\d)")
 period_strip = re.compile("(?!<=\d)(\.)(?!\d)")
 
 manumal_map = {
-    'khong' : '0',
-    'mot' : '1',
+    'không' : '0',
+    'một' : '1',
     'hai' : '2',
     'ba' : '3',
-    'bon' : '4',
-    'nam' : '5',
-    'sau' : '6',
-    'bay' : '7',
-    'tam' : '8',
-    'chin' : '9',
-    'muoi' : '10'
+    'bốn' : '4',
+    'năm' : '5',
+    'sáu' : '6',
+    'bảy' : '7',
+    'tám' : '8',
+    'chín' : '9',
+    'mười' : '10'
 }
 
 def process_punctuation(text):
