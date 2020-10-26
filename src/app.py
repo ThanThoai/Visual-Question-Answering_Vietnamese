@@ -252,4 +252,26 @@ class App():
         
         ans_ix_list = np.array(ans_ix_list).reshape(-1)
         
-        #TODO
+        if validation:
+            if self.__C.RUN_MODE not in ['train']:
+                result_eval_file = self.__C.CACHE_PATH +  '/result_run_' + self.__C.CKPT_VERSION
+            else:
+                result_eval_file = self.__C.CACHE_PATH + '/result_run_' + self.__C.VERSION
+                
+        else:
+            if self.__C.CKPT_PATH is not None:
+                result_eval_file = self.__C.CACHE_PATH + '/result_run_' + self.__C.CKPT_VERSION
+            else:
+                result_eval_file = self.__C.CACHE_PATH + '/result_run_' + self.__C.CKPT_VERSION + '_epoch' + str(self.__C.CKPT_EPOCH)
+                
+        if self.__C.CKPT_PATH is not None:
+            ensemble_file = self.__C.PRED_PATH + '/result_run_' + self.__C.CKPT_VERSION + '.pkl'
+        else:
+            ensemble_file = self.__C.PRED_PATH + '/result_run_' + self.__C.CKPT_VERSION + '_epoch' + str(self.__C.CKPT_EPOCH) + '.pkl'
+
+        if self.__C.RUNMODE not in ['train']:
+            log_file = self.__C.LOG_PATH + '/log_run_' + self.__C.CKPT_VERSION + '.txt'
+        else:
+            log_file = self.__C.LOG_PATH + '/log_run_' + self.VERSION + '.txt'
+            
+        EvalLoader(self.__C).eval(dataset, ans_ix_list, pred_list, result_eval_file, ensemble_file, log_file, validation)
