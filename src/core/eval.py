@@ -2,7 +2,7 @@ from collections import defaultdict
 from tqdm import tqdm
 import os
 import glob
-import json as
+import json 
 
 class Eval:
     
@@ -65,10 +65,10 @@ class Eval:
                 self.scores[answer_type].append(score)
                 
                 if choice_path is not None:
-                    valid = self.belogs(predicted, choices[qid]['valid'], question)
+                    valid = self.belongs(predicted, choices[qid]['valid'], question)
                     self.scores["validity"].append(self.to_score(valid))
                     
-                    plausible = self.belogs(predicted, choices[qid]['plausible'], question) 
+                    plausible = self.belongs(predicted, choices[qid]['plausible'], question) 
                     self.scores["plausibility"].append(self.to_score(plausible))
                     
                 global_group = question['groups']['global']
@@ -118,3 +118,95 @@ class Eval:
         self.result_string = []
         self.detail_result_string = []
         
+        for m in metrics:
+            if m == 'grounding':
+                continue
+            if m == "consistency" and not EVAL_CONSISTENCY:
+                continue
+            if m == "validity" and choice_path is None:
+                continue
+            if m == "plausibility" and choice_path is None:
+                continue
+            
+            self.result_string.append("{title}: {score:.2f}{suffix}".format(title= m.capitalize(), score= self.score[m],
+                                                                    suffix= " (lower if better" if m == "distribution" else "%"))
+            
+        for m, m_print_name in detaled_metrics:
+            self.detail_result_string.append("{}:".format(m_print_name))
+            for t in sorted(list(self.scores[m].keys())):
+                t_name = t
+                if isinstance(self.scores[k], list):
+                    t_name = sub_metrics.get(t, t).capitalize()
+                self.detail_result_string.append(" {title}: {score:.2f}{suffix} ({amout} question)".format(title=t_name, score = self.scores[m][t][0], suffix = "%", amount = self.scores[m][t][1])) 
+                       
+    def get_str_result(self):
+        return self.result_string, self.detail_result_string
+    
+    def load_file(self, name):
+        if os.path.isfile(name):
+            with open(name) as file:
+                data = json.load(file)
+        elif os.path.isdir(name.split(".")[0]):
+            data = {}
+            chunks = glob.glob('{dir}/{dir}_*.{ext}'.format(dir = name.split(".")[0], ext = name.split(".")[1]))
+            for chunk in chunks:
+                with open(chunk) as file:
+                    data.update(json.load(file))
+        else:
+            raise Exception("[ERROR] Can't find {}".format(name))
+        
+    def to_score(self, b):
+        return float(1 if b else 0)
+    
+    def avg(self, l):
+        if len(l) == 0:
+            return 0
+        return float(sum(l)) / len(l)
+    
+    def warg(self, l , w):
+        if sum(w) == 0:
+            return 0
+        else:
+            return float(sum(l[i] * w[i] for i in range(len(l)))) / len(l)
+        
+    def get_word_sum(self, question):
+        return len(question["question"].split())
+    
+    def get_step_num(self, question):
+        return len([c for c in question['sematic'] if not (any([o in "{}: {}".format(c["operation"], c["argument"]) for o in ["exits", "query: name", "choose name"]]))])
+    
+    def belongs(self, element, group, question):
+        if "Common" in question["type"]["detailed"]:
+            group = ["color", "material", "shape"]
+        return element in group
+    
+    def upadte_consistency(self, question_id, question, questions):
+        
+        inferred_questrions = [eid for eid in question["entailed"] if eid != question_id]
+        
+        if self.correct and len(inferred_questrions) > 0:
+            consistency_scores = []
+            for eid in inferred_questrions:
+                gold = questions[eid]["answer"]
+                predicted = self.predictions[eid]
+                score = self.to_score(predicted == gold)
+                consistency_scores.append(score)
+                
+            self.scores["consistency"].append(self.avg(consistency_scores))
+            
+        
+    def chi_square(self, gold_dist, predicted_dist):
+        
+        sum_score, sum_overall = 0, 0 
+        for group in gold_dist:
+            score, overall = 0, 0
+            for ans in gold_dist[group]:
+                e = gold_dist[group][ans]
+                o = predicted_dist[group].get(ans, 0)
+                score += ((float(o -e) ** 2) / e)
+                overall += gold_dist[group][ans]
+            sum_score += score * overall
+            sum_overall += overall
+            
+        avg_score = float(sum_score) / sum_overall
+        return avg_score
