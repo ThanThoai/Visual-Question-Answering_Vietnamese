@@ -1,0 +1,4 @@
+torch
+fairseq
+vncorenlp
+transformer
