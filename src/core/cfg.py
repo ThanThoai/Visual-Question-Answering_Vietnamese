@@ -61,7 +61,7 @@ class Config(PATH):
         
     def str_to_bool(self, args):
         
-        bool_list = ['EVAL_EVERY_EPOCH', 'TEST_SAVE_PRED', 'RESUME', 'PIN_MEM', 'VERBOSE']
+        bool_list = ['EVAL_EVERY_EPOCH', 'TEST_SAVE_PRED', 'RESUME', 'PIN_MEM', 'VERBOSE', 'EMBED_METHOD']
         
         for arg in dir(args):
             if arg in bool_list and getattr(args, arg) is not None:
@@ -82,7 +82,7 @@ class Config(PATH):
             setattr(self, arg, args_dict[arg])
             
     def proc(self):
-        assert self.RUN_MODE in ['train', 'val', 'test']
+        assert self.RUN_MODE in ['TRAIN', 'VAL', 'TEST']
         
         os.environ['CUDA_VISIBLE_DEVICES'] = self.GPU
         self.N_GPU = len(self.GPU.split(','))

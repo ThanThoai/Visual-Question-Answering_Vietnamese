@@ -24,6 +24,18 @@ def parse_args():
                         '}'
                      ,
                      type=str, required=True)
+   
+   parser.add_argument('--EMDED', dest='EMDEDING_METHOD',
+                       choices = [
+                          'BERT_BASE',
+                          'BERT_LARGE'
+                          ]
+                        ,
+                        help='{'
+                              'Bert model'
+                              '}'
+                        ,
+                        type=str, required=True)
 
 
    parser.add_argument('--SPLIT', dest='TRAIN_SPLIT',
@@ -44,15 +56,15 @@ def parse_args():
 
    parser.add_argument('--BS', dest='BATCH_SIZE',
                      help='batch size in training',
-                     type=int)
+                     type=int, default=32)
 
    parser.add_argument('--GPU', dest='GPU',
                      help="gpu choose, eg.'0, 1, 2, ...'",
-                     type=str)
+                     type=str, default='0')
 
    parser.add_argument('--SEED', dest='SEED',
                      help='fix random seed',
-                     type=int)
+                     type=int, default=42)
 
    parser.add_argument('--VERSION', dest='VERSION',
                      help='version control',
