@@ -3,9 +3,8 @@ import glob
 import json
 import re
 import torch
-import en_vectors_web_lg
 from utils.preprocesstext import prep_ans
-
+from core.text.tokenizer import Embedding
 from core.datasets import Dataset
 
 
@@ -71,18 +70,14 @@ class DataLoader(Dataset):
             iid_to_path[iid] = path
         return iid_to_path
         
-    def tokenize(self, json_file, use_glove):
+    def tokenize(self, json_file, use_bert = True):
         token_to_ix, max_token = json.load(open(json_file, 'rb'))[2:]
         spacy_tool = None
         
-        if use_glove:
-            spacy_tool = en_vectors_web_lg.load()
+        if use_bert:
+            spacy_tool = Embedding(self.__C, token_to_ix)
             
-        pretrained_emb = []
-        for word in token_to_ix:
-            if use_glove:
-                pretrained_emb.append(spacy_tool(word).vector)
-        pretrained_emb = np.array(pretrained_emb)
+        pretrained_emb = spacy_tool.run()
         return token_to_ix, pretrained_emb, max_token
     
     def ans_stat(self, json_file):
@@ -97,7 +92,7 @@ class DataLoader(Dataset):
         ques_ix_iter = self.proc_ques(ques, self.token_to_ix, max_token = self.max_token)
         ans_iter = np.zeros(1)
         
-        if self.__C.RUN_MODE in ['train']:
+        if self.__C.RUN_MODE in ['TRAIN']:
             ans = self.ques_dict[qid]['answer']
             ans_iter = self.proc_ans(ans, self.ans_to_ix)
             
@@ -163,3 +158,7 @@ class DataLoader(Dataset):
         ans = prep_ans(ans)
         ans_ix[0] = ans_to_ix[ans]
         return ans_ix
+       
+        
+        
+        

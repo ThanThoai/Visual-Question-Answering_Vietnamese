@@ -215,7 +215,7 @@ class Eval:
     
     
 
-def eval(__C, dataset, ans_ix_list, pred_list, result_eval_file, ensemble_file, log_file, valid = False):
+def eval_model(__C, dataset, ans_ix_list, pred_list, result_eval_file, ensemble_file, log_file, valid = False):
     
     result_eval_file = result_eval_file + '.json'
     qid_list = [qid for qid in dataset.qid_list]

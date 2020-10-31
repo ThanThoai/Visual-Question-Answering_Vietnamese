@@ -12,6 +12,7 @@ class Model(torch.nn.Module):
         self.__C = __C
         
         self.embedding = torch.nn.Embedding(num_embeddings = token_size, embedding_dim= self.__C.WORD_EMBED_SIZE)
+        self.embedding.weights.data.copy_(torch.from_numpy(pretrained_emb))
         
         self.lstm = torch.nn.LSTM(
             input_size = self.__C.WORD_EMBED_SIZE,

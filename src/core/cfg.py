@@ -32,8 +32,7 @@ class Config(PATH):
         
         self.TRAIN_SPLIT = 'train'
         self.EMBED_METHOD = '' 
-        
-        self.WORD_EMBED_SIZE = 300 
+        self.WORD_EMBED_SIZE = None
         self.FEAT_SIZE = {
             'FRCN_FEAT_SIZE' : (100, 2048),
             'GRID_FEAT_SIZE' : (49, 2048),
@@ -111,10 +110,10 @@ class Config(PATH):
                     
         
         self.SPLIT = self.SPLITS[self.DATASET]
-        self.SPLIT['train'] = self.TRAIN_SPLIT
-        if self.SPLIT['val'] in self.SPLIT['train'].split('+') or self.RUN_MODE not in ['train']:
+        self.SPLIT['TRAIN'] = self.TRAIN_SPLIT
+        if self.SPLIT['VAL'] in self.SPLIT['TRAIN'].split('+') or self.RUN_MODE not in ['TRAIN']:
             self.EVAL_EVERY_EPOCH = False
-        if self.RUN_MODE not in ['test']:
+        if self.RUN_MODE not in ['TEST']:
             self.TEST_SAVE_PRED = False
         
         assert self.BATCH_SIZE % self.GRAD_ACCU_STEPS == 0

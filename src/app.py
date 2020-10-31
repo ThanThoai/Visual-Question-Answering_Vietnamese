@@ -9,13 +9,27 @@ import shutil
 import numpy as np
 from core.optimizer import optim, adjust_lr
 from model import Model
+from core.eval import eval_model
 
 
 class App():
 
-    def __init__(self, __C, dataset):
+    def __init__(self, __C):
         self.__C = __C
-        self.dataset = dataset
+        self.dataset = DataLoader(__C)
+        
+    def run(self, run_mode, dataset):
+        if run_mode == 'train': 
+            if self.__C.RESUME is False:
+                self.empty_log(self.__C.VERSION)
+            self.train(self.__C)
+        elif run_mode == 'val': 
+            self.test(self.__C, dataset, validation = True)
+        elif run_mode == 'test': 
+            self.test(self.__C, dataset)
+        else:
+            exit(-1)
+            
 
     def train(self, dataset_eval = None):
 
@@ -273,5 +287,14 @@ class App():
             log_file = self.__C.LOG_PATH + '/log_run_' + self.__C.CKPT_VERSION + '.txt'
         else:
             log_file = self.__C.LOG_PATH + '/log_run_' + self.VERSION + '.txt'
-            
-        EvalLoader(self.__C).eval(dataset, ans_ix_list, pred_list, result_eval_file, ensemble_file, log_file, validation)
+                        
+        eval_model(dataset, ans_ix_list, pred_list, result_eval_file, ensemble_file, log_file, validation)
+        
+        
+        
+    def empty_log(self, version):
+        print("[INFO] Initializing log file......")
+        if os.path.exists(self.__C.LOG_PATH + '/log_run_' + version + '.txt'):
+            os.remove(self.__C.LOG_PATH + '/log_run_' + version + '.txt')
+        print('Finished')
+        print("")
