@@ -30,7 +30,7 @@ class Embedding:
         self.__C = __C
         self.token_to_ix = token_to_ix
         self.method = self.__C["METHOD"]
-        assert self.ethod in ["BERT_SMALL", "BERT_LARGE"], "[ERROR] Method {} not supported!!!!".format(self.method)
+        assert self.method in ["BERT_BASE", "BERT_LARGE"], "[ERROR] Method {} not supported!!!!".format(self.method)
         self.pho_bert = RobertaModel(self.__C.EMBEDDING_MODEL[self.method]['NAME'], self.__C.EMBEDDING_MODEL[self.method]["PATH_CHECKPOINT_FILE"])
         self.pho_bert.eval()
         args = BPE()

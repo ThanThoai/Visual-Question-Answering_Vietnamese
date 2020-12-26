@@ -24,14 +24,13 @@ class Config(PATH):
         
         self.MODEL = ''
         self.MODEL_USE = ''
-        self.DATASET = ''
         
         self.RUN_MODE = ''
         self.EVAL_EVERY_EPOCH = True 
         self.TEST_SAVE_PRED = False 
         
         self.TRAIN_SPLIT = 'train'
-        self.EMBED_METHOD = '' 
+        self.METHOD = '' 
         self.WORD_EMBED_SIZE = None
         self.FEAT_SIZE = {
             'FRCN_FEAT_SIZE' : (100, 2048),
@@ -61,7 +60,7 @@ class Config(PATH):
         
     def str_to_bool(self, args):
         
-        bool_list = ['EVAL_EVERY_EPOCH', 'TEST_SAVE_PRED', 'RESUME', 'PIN_MEM', 'VERBOSE', 'EMBED_METHOD']
+        bool_list = ['EVAL_EVERY_EPOCH', 'TEST_SAVE_PRED', 'RESUME', 'PIN_MEM', 'VERBOSE', 'METHOD']
         
         for arg in dir(args):
             if arg in bool_list and getattr(args, arg) is not None:
