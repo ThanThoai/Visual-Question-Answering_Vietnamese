@@ -90,20 +90,18 @@ First, install dependencies
 git clone https://github.com/ThanThoai/Visual-Question-Answering_Vietnamese
 
 # install project   
-cd deep-learning-project-template 
-pip install -e .   
-pip install -r requirements.txt
+cd Visual-Question-Answering_Vietnamese 
+
+bash setup.sh
  ```   
  Next, navigate to any file and run it.   
  ```bash
 # module folder
-cd project
 
-# run module (example: mnist as your main contribution)   
-python lit_classifier_main.py    
+python main.py    
 ```
 
-## Imports
+<!-- ## Imports
 This project is setup as a package which means you can now easily import any file into any other file like so:
 ```python
 from project.datasets.mnist import mnist
@@ -122,8 +120,8 @@ trainer.fit(model, train, val)
 
 # test using the best model!
 trainer.test(test_dataloaders=test)
-```
-
+``` -->
+<!-- 
 ### Citation   
 ```
 @article{YourName,
@@ -132,4 +130,4 @@ trainer.test(test_dataloaders=test)
   journal={Location},
   year={Year}
 }
-```
+``` -->
