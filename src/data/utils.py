@@ -16,7 +16,7 @@ from typing import List, Dict
 
 class Tokenizer:
 
-    def __init__(self, path = '/Absolute-path-to/vncorenlp/VnCoreNLP-1.1.1.jar'):
+    def __init__(self, path = './vncorenlp/VnCoreNLP-1.1.1.jar'):
 
         self.path = path 
         self.rdrsegenter = VnCoreNLP(self.path, annotators="wseg", max_heap_size='-Xmx500m')
@@ -29,10 +29,10 @@ class Tokenizer:
         return re_sentences
 
 class BPE_BASE():
-    bpe_codes = 'PhoBERT_base_fairseq/bpe.codes'
+    bpe_codes = './PhoBERT_base_fairseq/bpe.codes'
 
 class BPE_LARGE():
-    bpe_codes = "PhoBERT_large_fairseq/bpe.codes"
+    bpe_codes = "./PhoBERT_large_fairseq/bpe.codes"
 
 class Embedding:
     
