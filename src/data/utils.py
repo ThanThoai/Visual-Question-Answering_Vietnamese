@@ -28,8 +28,11 @@ class Tokenizer:
             return " ".join([s for s in re_sentences])
         return re_sentences
 
-class BPE():
-    bpe_codes = 'PhoBERT_base_faiers/bpe.codes'
+class BPE_BASE():
+    bpe_codes = 'PhoBERT_base_fairseq/bpe.codes'
+
+class BPE_LARGE():
+    bpe_codes = "PhoBERT_large_fairseq/bpe.codes"
 
 class Embedding:
     
@@ -40,12 +43,12 @@ class Embedding:
         self.method = BERT_MODEL
         self.dict_model = {
             "BERT_BASE" : {
-                "NAME" : "PhoBERT_base_fairseq",
+                "NAME" : "./PhoBERT_base_fairseq",
                 "PATH_CHECKPOINT_FILE" : "model.pt"
             },
 
             "BERT_LARGE" : {
-                "NAME" : "PhoBERT_large_fairseq",
+                "NAME" : "./PhoBERT_large_fairseq",
                 "PATH_CHECKPOINT_FILE" : "model.pt"
             }
 
@@ -54,7 +57,10 @@ class Embedding:
         self.pho_bert = RobertaModel(self.dict_model[self.method]["NAME"], self.dict_model[self.method]["PATH_CHECKPOINT_FILE"])
         self.tokenize = Tokenizer()
         self.pho_bert.eval()
-        args = BPE()
+        if self.method == "BERT_BASE":
+            args = BPE_BASE()
+        else:
+            args = BPE_LARGE()
         self.pho_bert.bpe = fastBPE(args)
         self.embeding = {}
         self.write_file = write_file
