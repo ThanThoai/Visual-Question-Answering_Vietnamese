@@ -11,6 +11,7 @@ from fairseq.models.roberta import RobertaModel
 from fairseq.data.encoders.fastbpe import fastBPE
 import tqdm
 from typing import List, Dict
+import argparse
 
 
 
@@ -94,6 +95,22 @@ class Embedding:
         return result
 
 
+
+
 if __name__ == '__main__':
-    test = Embedding("BERT_BASE")
-    test.extract("Đây là thử nghiệm.")
+    parser = argparse.ArgumentParser(description="Extract Features Text")
+    parser.add_argument("--MODEL", dest="RUN MODEL BERT",
+                        choices= ["BASE", "LARGE"],
+                        type =str,
+                        required = True)
+    
+    parser.add_argument("--DATA", dest="DATA",
+                        type = str,
+                        required = True)     
+
+
+    args = parser.parse_args()
+    
+    App = Embedding(args.MODEL)
+    data = json.load(open(args.DATA, "rb"))
+    App.run(data["question"])
