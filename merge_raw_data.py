@@ -158,12 +158,14 @@ if __name__ == '__main__':
 
     with open(args.path_file, "r") as rb:
         js = rb.readlines()
-
+    count = 0
     for i, question in enumerate(data):
         for q in js["questions"]:
-            if int(q["question_id"]) == int(idx[i].replace("\n", ""):
+            if int(q["question_id"]) == int(idx[i].replace("\n", "")):
                 q["question"] =  question
-
+                count += 1
+    print(len(idx))
+    print(count)
     json.dump(open(f"{args.type_}_vi.json", "w"), js)
 
     
