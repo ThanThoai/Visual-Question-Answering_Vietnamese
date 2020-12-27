@@ -169,13 +169,13 @@ if __name__ == '__main__':
     list_miss = []
     for question in tqdm.tqdm(js["questions"]):
         if question["question_id"] in vi_dict.keys():
-            question["question"] = vi_dict[question["question_id"]]
+            question["question"] = vi_dict[str(question["question_id"])]
             count.append(question["question_id"])
         else:
             list_miss.append(question["question_id"])
     print(len(count))
     print(len(list_miss))
-    json.dump(open(f"{args.type_}_vi.json", "w"), js)
+    json.dump(open(js, f"{args.type_}_vi.json", "w"))
 
     
         
