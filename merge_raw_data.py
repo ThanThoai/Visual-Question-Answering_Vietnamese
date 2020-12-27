@@ -50,7 +50,7 @@ def get_list_text(path_en, path_vi, path_idx, type_ = "train"):
 
     list_en = os.listdir(path_en)
     for en in list_en:
-        if (type != "test" and type_ in en) or (type_ in en and "testdev" not in en):
+        if type_ in en and "testdev" not in en:
             with open(os.path.join(path_en, en), mode = 'r') as rb:
                 data_en += [i.replace("\n", "") for i in rb.readlines()]
 
