@@ -133,10 +133,10 @@ if __name__ == '__main__':
                         default = "",
                         required = True)     
 
-    parser.add_argument("--path_en", dest="path_en",
-                        type = str,
-                        default = "",
-                        required = True)
+    # parser.add_argument("--path_en", dest="path_en",
+    #                     type = str,
+    #                     default = "",
+    #                     required = True)
 
     parser.add_argument("--type", dest = "type_",
                         type = str,
