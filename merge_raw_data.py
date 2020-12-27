@@ -167,7 +167,9 @@ if __name__ == '__main__':
     print(len(js["questions"]))
     count = []
     list_miss = []
-    for question in tqdm.tqdm(js["questions"]):
+    for question in tqdm.tqdm(js["questions"][:20]):
+        print(type(question["question_id"]))
+        print(question["question_id"])
         if question["question_id"] in vi_dict.keys():
             question["question"] = vi_dict[str(question["question_id"])]
             count.append(question["question_id"])
