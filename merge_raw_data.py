@@ -56,7 +56,7 @@ def get_list_text(path_en, path_vi, path_idx, type_ = "train"):
                 data_en += [i.replace("\n", "") for i in rb.readlines()]
 
             i_ = en.split("_")
-            idx = "_".join(i for i in en[:-1]) +  "_idx_" + i_[-1]
+            idx = "_".join(i for i in i_[:-1]) +  "_idx_" + i_[-1]
             i_ = en.split(".")
             vi = i_[0] + "en.vi." + i_[1]
             with open(os.path.join(path_idx, idx), mode='r') as rb:
