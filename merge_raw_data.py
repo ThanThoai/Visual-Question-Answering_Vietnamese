@@ -150,13 +150,13 @@ if __name__ == '__main__':
     # main(args.path_en, args.path_en_vi, args.path_idx, args.path_file, args.type_)
     
 
-    with open(args.path_en_vi, "r") as rb:
+    with open(args.path_en_vi, "r", encoding = "utf-8") as rb:
         data = rb.readlines()
 
-    with open(args.path_idx, "r") as rb:
+    with open(args.path_idx, "r", encoding = "utf-8") as rb:
         idx = rb.readlines()
 
-    with open(args.path_file, "r") as rb:
+    with open(args.path_file, "rb", encoding = "utf-8") as rb:
         js = json.load(rb)
     vi_dict = {}
     for i, d in enumerate(data):
@@ -175,7 +175,7 @@ if __name__ == '__main__':
             list_miss.append(question["question_id"])
     print(len(count))
     print(len(list_miss))
-    json.dump(open(js, f"{args.type_}_vi.json", "w"))
+    json.dump(js, open(f"{args.type_}_vi.json", "w"))
 
     
         
