@@ -102,12 +102,12 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
                 count_check += 1
                 break
     with open(f"new_vi_{type_}.txt", "w") as wr:
-        for question in data_vi[-1]:
+        for question in data_vi[:-1]:
             wr.write(question)
             wr.write("\n")
         wr.write(data_vi[-1])
     with open(f"new_idx_{type_}.txt", "w") as wr:
-        for idx in new_idx[-1]:
+        for idx in new_idx[:-1]:
             wr.write(idx)
             wr.write("\n")
         wr.write(new_idx[-1])
