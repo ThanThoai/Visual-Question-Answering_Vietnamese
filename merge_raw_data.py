@@ -63,9 +63,9 @@ def get_list_text(path_en, path_vi, path_idx, type_ = "train"):
                 data_idx += [i.replace("\n", "") for i in rb.readlines()]
 
             with open(os.path.join(path_vi, vi), mode = "r") as rb:
-                data_idx += [i.replace("\n", "") for i in rb.readlines()]      
-
+                data_vi += [i.replace("\n", "") for i in rb.readlines()]      
     assert len(data_en) == len(data_idx) and len(data_idx) == len(data_vi), "ERROR" 
+
 
     return data_en, data_vi, data_idx
 
