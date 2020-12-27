@@ -160,11 +160,11 @@ if __name__ == '__main__':
         js = json.load(rb)
     vi_dict = {}
     for i, d in enumerate(data):
-        vi_dict[int(idx[i].replace("\n", ""))] = d
+        vi_dict[idx[i].replace("\n", "")] = d
     print(len(vi_dict))
     count = 0
     for question in tqdm.tqdm(js["questions"]):
-        question["question"] = vi_dict[question["question_id"]]
+        question["question"] = vi_dict[str(question["question_id"])]
         count += 1
     print(len(idx))
     print(count)
