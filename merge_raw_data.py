@@ -164,9 +164,10 @@ if __name__ == '__main__':
     print(len(vi_dict))
     print(idx[:10])
     print(list(vi_dict.keys())[:10])
+    print(len(js["questions"]))
     count = 0
     for question in tqdm.tqdm(js["questions"]):
-        print(question["question_id"])
+        # print(question["question_id"])
         question["question"] = vi_dict[str(question["question_id"])]
         count += 1
     print(len(idx))
