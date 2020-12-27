@@ -63,7 +63,9 @@ def get_list_text(path_en, path_vi, path_idx, type_ = "train"):
                 data_idx += [i.replace("\n", "") for i in rb.readlines()]
 
             with open(os.path.join(path_vi, vi), mode = "r") as rb:
-                data_vi += [i.replace("\n", "") for i in rb.readlines()]      
+                data_vi += [i.replace("\n", "") for i in rb.readlines()]  
+    print(len(data_en))
+    print(len(data_vi))    
     assert len(data_en) == len(data_idx) and len(data_idx) == len(data_vi), "ERROR" 
 
 
@@ -89,8 +91,9 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
             dict_question[i_.replace("\n", "")] = {}
         dict_question[i_.replace("\n", "")][i] = data_en[i].replace("\n", "")
     count_check = 0
+    print(list(dict_question.keys())[:10])
     for question in data_json["questions"]:
-        image_id = question["image_id"]
+        image_id = str(question["image_id"])
         qid = question["question_id"]
         q = question["question"]
         for key, value in dict_question[image_id].items():
