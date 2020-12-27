@@ -170,13 +170,12 @@ if __name__ == '__main__':
     for i, question in tqdm.tqdm(enumerate(js["questions"])):
         # print(type(question["question_id"]))
         # print(question["question_id"])
-        if question["question_id"] - int(idx[i].replace("\n", "")) == 0:
-            question["question"] = data[i].replace("\n", "")
-            count.append(i)
+        qid = str(question["question_id"])
+        if qid in vi_dict.keys():
+            question["question"] = vi_dict[qid]
+            count.append(qid)
         else:
-            print(question["question_id"])
-            print(idx[i])
-            list_miss.append(i)
+            list_miss.append(qid)
     print(len(count))
     print(len(list_miss))
     json.dump(js, open(f"{args.type_}_vi.json", "w"))
