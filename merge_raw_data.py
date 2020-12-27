@@ -165,13 +165,16 @@ if __name__ == '__main__':
     print(idx[:10])
     print(list(vi_dict.keys())[:10])
     print(len(js["questions"]))
-    count = 0
+    count = []
+    list_miss = []
     for question in tqdm.tqdm(js["questions"]):
-        # print(question["question_id"])
-        question["question"] = vi_dict[question["question_id"]]
-        count += 1
-    print(len(idx))
-    print(count)
+        if question["question_id"] in vi_dict.keys():
+            question["question"] = vi_dict[question["question_id"]]
+            count.append(question["question_id"])
+        else:
+            list_miss.append(question["question_id"])
+    print(len(count))
+    print(len(list_miss))
     json.dump(open(f"{args.type_}_vi.json", "w"), js)
 
     
