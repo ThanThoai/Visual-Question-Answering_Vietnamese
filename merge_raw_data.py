@@ -158,13 +158,14 @@ if __name__ == '__main__':
 
     with open(args.path_file, "r") as rb:
         js = json.load(rb)
+    vi_dict = {}
+    for i, d in enumerate(data):
+        vi_dict[int(i.replace("\n", ""))] = d
+    print(len(vi_dict))
     count = 0
-    for i, question in enumerate(data):
-        for q in js["questions"]:
-            if int(q["question_id"]) == int(idx[i].replace("\n", "")):
-                q["question"] =  question
-                count += 1
-                break
+    for question in tqdm.tqdm(js["questions"]):
+        question["question"] = vi_dict[question["question_id"]]
+        count += 1
     print(len(idx))
     print(count)
     json.dump(open(f"{args.type_}_vi.json", "w"), js)
