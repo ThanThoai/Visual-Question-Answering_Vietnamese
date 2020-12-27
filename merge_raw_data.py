@@ -161,10 +161,10 @@ if __name__ == '__main__':
     vi_dict = {}
     for i, d in enumerate(data):
         vi_dict[idx[i].replace("\n", "")] = d
-    print(len(vi_dict))
-    print(idx[:10])
-    print(list(vi_dict.keys())[:10])
-    print(len(js["questions"]))
+    # print(len(vi_dict))
+    # print(idx[:10])
+    # print(list(vi_dict.keys())[:10])
+    # print(len(js["questions"]))
     count = []
     list_miss = []
     for i, question in tqdm.tqdm(enumerate(js["questions"])):
@@ -174,6 +174,8 @@ if __name__ == '__main__':
             question["question"] = data[i].replace("\n", "")
             count.append(i)
         else:
+            print(question["question_id"])
+            print(idx[i])
             list_miss.append(i)
     print(len(count))
     print(len(list_miss))
