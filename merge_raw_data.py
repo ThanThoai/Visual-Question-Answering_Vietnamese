@@ -156,7 +156,7 @@ if __name__ == '__main__':
     with open(args.path_idx, "r", encoding = "utf-8") as rb:
         idx = rb.readlines()
 
-    with open(args.path_file, "rb", encoding = "utf-8") as rb:
+    with open(args.path_file, "rb") as rb:
         js = json.load(rb)
     vi_dict = {}
     for i, d in enumerate(data):
