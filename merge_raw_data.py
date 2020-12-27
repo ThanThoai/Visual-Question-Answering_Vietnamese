@@ -108,76 +108,100 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
             wr.write(idx)
             wr.write("\n")
         wr.write(new_idx[-1])
-    
-
-
-
-        
-
-
-
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Convert")
-    parser.add_argument("--path_en_vi", dest="",
+    parser.add_argument("--path_en_vi", dest="path_en_vi",
                         type =str,
                         required = True)
     
-    parser.add_argument("--path_idx", dest="",
+    parser.add_argument("--path_idx", dest="path_idx",
                         type = str,
                         required = True)   
 
-    parser.add_argument("--path_file", dest="",
+    parser.add_argument("--path_file", dest="path_file",
                         type = str,
-                        required = True)             
+                        required = True)     
+
+    parser.add_argument("--path_en", dest="path_en",
+                        type = str,
+                        required = True)
+
+    parser.add_argument("--type", dest = "type_",
+                        type = str,
+                        required = True)        
 
 
     args = parser.parse_args()
+    print(args)
 
-    path_en_vi = args.path_en_vi
-    path_idx   = args.path_idx
-    file_path = args.path_file
+    main(args.path_en, args.path_en_vi, args.path_idx, args.path_file, args.type_)
+    # path_en_vi = args.path_en_vi
+    # path_idx   = args.path_idx
+    # file_path = args.path_file
 
-    dict_file = {
-        "train" : [],
-        "val" : [],
-        "test" : [],
-        "test-dev" : []
-    }
+    # dict_file = {
+    #     "train" : [],
+    #     "val" : [],
+    #     "test" : [],
+    #     "test-dev" : []
+    # }
 
-    list_file = os.listdir(path_en_vi)
-    for file in list_file:
-        if "train" in file:
-            dict_file["train"].append(os.path.join(path_en_vi, file))
-        elif "val" in file:
-            dict_file["val"].append(os.path.join(path_en_vi, file))
-        elif 'testdev' in file:
-            dict_file["test-dev"].append(os.path.join(path_en_vi, file))
-        else:
-            dict_file["test"].append(os.path.join(path_en_vi, file))
+    # list_file = os.listdir(path_en_vi)
+    # for file in list_file:
+    #     if "train" in file:
+    #         dict_file["train"].append(os.path.join(path_en_vi, file))
+    #     elif "val" in file:
+    #         dict_file["val"].append(os.path.join(path_en_vi, file))
+    #     elif 'testdev' in file:
+    #         dict_file["test-dev"].append(os.path.join(path_en_vi, file))
+    #     else:
+    #         dict_file["test"].append(os.path.join(path_en_vi, file))
 
 
 
-    for t in dict_file.keys():
-        data = {}
-        for f in tqdm.tqdm(dict_file[t]):
-            with open(f, 'r') as rb:
-                d = rb.readlines()
-            p_i = f.split("/")[-1].replace("en.vi", "").split("_")
-            p_idx = p_i[0] + "_idx_" + p_i[1]
-            with open(os.path.join(path_idx, p_idx), 'r') as rb:
-                idx = rb.readlines()
+    # for t in dict_file.keys():
+    #     data = {}
+    #     print(t)
+    #     for f in tqdm.tqdm(dict_file[t]):
+    #         with open(f, 'r') as rb:
+    #             d = rb.readlines()
+    #         p_i = f.split("/")[-1].replace("en.vi.", "").split("_")
+    #         p_idx = "_".join(w for w in p_i[:-1]) + "_idx_" + p_i[-1]
+    #         with open(os.path.join(path_idx, p_idx), 'r') as rb:
+    #             idx = rb.readlines()
             
-            for i, _i in enumerate(idx):
-                data[_i] = d[i]
-        if t == 'train' or t == 'val':
-            js = json.load(open(os.path.join(file_path, f"v2_OpenEnded_mscoco_{t}2014_questions.json"), 'rb'))
-        else:
-            js = json.load(open(os.path.join(file_path, f"v2_OpenEnded_mscoco_{t}2015_questions.json"), 'rb'))
-        for j in tqdm.tqdm(js['question']):
-            j["question"] = data[j['question_id']]
+    #         for i, _i in enumerate(idx):
+    #             data[_i.replace("\n", "")] = d[i].replace("\n","")
+    #     print(list(data.values())[0])
+    #     if t == 'train':
+    #         js = json.load(open(os.path.join(file_path, f"v2_OpenEnded_mscoco_{t}2014_questions.json"), 'rb'))
+    #         for j in tqdm.tqdm(js['questions']):
+    #             j["question"] = data[j['question_id']]
 
-        json.dump(open(f"{t}_vi.json"), js)
+    #         json.dump(open(f"{t}_vi.json"), js)
+    #     elif t == 'val':
+    #         js = json.load(open(os.path.join(file_path, f"v2_OpenEnded_mscoco_{t}2014_questions.json"), 'rb'))
+    #         for j in tqdm.tqdm(js['questions']):
+    #             j["question"] = data[j['question_id']]
+
+    #         json.dump(open(f"{t}_vi.json"), js)
         
+    #     else:
+    #         js = json.load(open(os.path.join(file_path, f"v2_OpenEnded_mscoco_{t}2015_questions.json"), 'rb'))
+    #         for j in tqdm.tqdm(js['questions']):
+    #             j["question"] = data[j['question_id']]
+
+    #         json.dump(open(f"{t}_vi.json"), js)
+        
+    
+
+
+
+        
+
+
+
+
 
