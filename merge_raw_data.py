@@ -164,6 +164,7 @@ if __name__ == '__main__':
             if int(q["question_id"]) == int(idx[i].replace("\n", "")):
                 q["question"] =  question
                 count += 1
+                break
     print(len(idx))
     print(count)
     json.dump(open(f"{args.type_}_vi.json", "w"), js)
