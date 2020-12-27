@@ -157,7 +157,7 @@ if __name__ == '__main__':
         idx = rb.readlines()
 
     with open(args.path_file, "r") as rb:
-        js = rb.readlines()
+        js = json.load(rb)
     count = 0
     for i, question in enumerate(data):
         for q in js["questions"]:
