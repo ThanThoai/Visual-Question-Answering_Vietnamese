@@ -92,6 +92,7 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
         dict_question[i_.replace("\n", "")][i] = data_en[i].replace("\n", "")
     count_check = 0
     print(list(dict_question.keys())[:10])
+    print(len(data_json['questions']))
     for question in data_json["questions"]:
         image_id = str(question["image_id"])
         qid = str(question["question_id"])
