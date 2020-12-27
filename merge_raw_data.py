@@ -179,7 +179,7 @@ if __name__ == '__main__':
     print(len(count))
     print(len(list_miss))
     json.dump(js, open(f"{args.type_}_vi.json", "w"))
-
+    print(list_miss)
     
         
     
