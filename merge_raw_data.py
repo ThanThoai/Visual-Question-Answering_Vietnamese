@@ -102,6 +102,8 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
                     new_idx[int(key)] = qid
                     if checked[int(key)] == 0:
                         print(key)
+                    else:
+                        checked[int(key)] = 0
                     break
     print(np.sum(checked))
     with open(f"new_vi_{type_}.txt", "w") as wr:
