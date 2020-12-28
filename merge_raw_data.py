@@ -92,7 +92,6 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
         if i_.replace("\n", "") not in dict_question.keys():
             dict_question[i_.replace("\n", "")] = {}
         dict_question[i_.replace("\n", "")][i] = data_en[i].replace("\n", "")
-    count_check = 0
     for question in tqdm.tqdm(data_json["questions"]):
         image_id = str(question["image_id"])
         qid = question["question_id"]
@@ -101,7 +100,8 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
             for key, value in dict_question[image_id].items():
                 if check_string(q, value):
                     new_idx[int(key)] = qid
-                    checked[int(key)] = 0
+                    if checked[int(key)] == 0:
+                        print(key)
                     break
     print(np.sum(checked))
     with open(f"new_vi_{type_}.txt", "w") as wr:
