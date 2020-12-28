@@ -99,17 +99,13 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
         if image_id in dict_question.keys():
             for key, value in dict_question[image_id].items():
                 if check_string(q, value):
-                    new_idx[int(key)] = qid
                     if checked[int(key)] == 0:
-
-                        # print(value)
-                        print(key)
-                        print(q)
-                        print(value)
+                        break
                     else:
                         checked[int(key)] = 0
-                    break
-    print(np.sum(checked))
+                        new_idx[int(key)] = qid
+                        break
+    
     with open(f"new_vi_{type_}.txt", "w") as wr:
         for question in data_vi[:-1]:
             wr.write(question)
