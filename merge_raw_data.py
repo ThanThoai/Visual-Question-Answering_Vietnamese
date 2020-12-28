@@ -105,7 +105,7 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
                         checked[int(key)] = 0
                         new_idx[int(key)] = qid
                         break
-    
+    print(np.sum(checked))
     with open(f"new_vi_{type_}.txt", "w") as wr:
         for question in data_vi[:-1]:
             wr.write(question)
