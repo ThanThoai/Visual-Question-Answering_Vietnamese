@@ -103,6 +103,7 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
                     if checked[int(key)] == 0:
                         print(key)
                         print(value)
+                        print("Test")
                     else:
                         checked[int(key)] = 0
                     break
