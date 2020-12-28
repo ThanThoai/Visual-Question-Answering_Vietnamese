@@ -102,9 +102,9 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
                     new_idx[int(key)] = qid
                     if checked[int(key)] == 0:
 
-                        print(value)
-                        print(q)
+                        # print(value)
                         print(key)
+                        print(q)
                         print(value)
                     else:
                         checked[int(key)] = 0
