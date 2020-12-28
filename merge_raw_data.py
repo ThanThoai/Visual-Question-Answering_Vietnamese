@@ -101,11 +101,16 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
                 if check_string(q, value):
                     new_idx[int(key)] = qid
                     if checked[int(key)] == 0:
+<<<<<<< HEAD
                         print(value)
                         print(q)
                         # print(key)
                         # print(value)
                         # print("Test")
+=======
+                        print(key)
+                        print(value)
+>>>>>>> fb42158469f771f51990e9b9136de5e50ef1bd19
                     else:
                         checked[int(key)] = 0
                     break
