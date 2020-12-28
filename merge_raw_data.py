@@ -91,11 +91,9 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
             dict_question[i_.replace("\n", "")] = {}
         dict_question[i_.replace("\n", "")][i] = data_en[i].replace("\n", "")
     count_check = 0
-    print(list(dict_question.keys())[:10])
-    print(len(data_json['questions']))
     for question in data_json["questions"]:
         image_id = str(question["image_id"])
-        qid = str(question["question_id"])
+        qid = question["question_id"]
         q = question["question"]
         if image_id in dict_question.keys():
             for key, value in dict_question[image_id].items():
@@ -111,9 +109,9 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
         wr.write(data_vi[-1])
     with open(f"new_idx_{type_}.txt", "w") as wr:
         for idx in new_idx[:-1]:
-            wr.write(idx)
+            wr.write(str(idx))
             wr.write("\n")
-        wr.write(new_idx[-1])
+        wr.write(str(new_idx[-1]))
 
 
 if __name__ == '__main__':
@@ -133,10 +131,10 @@ if __name__ == '__main__':
                         default = "",
                         required = True)     
 
-    # parser.add_argument("--path_en", dest="path_en",
-    #                     type = str,
-    #                     default = "",
-    #                     required = True)
+    parser.add_argument("--path_en", dest="path_en",
+                        type = str,
+                        default = "",
+                        required = True)
 
     parser.add_argument("--type", dest = "type_",
                         type = str,
@@ -147,38 +145,38 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(args)
 
-    # main(args.path_en, args.path_en_vi, args.path_idx, args.path_file, args.type_)
+    main(args.path_en, args.path_en_vi, args.path_idx, args.path_file, args.type_)
     
 
-    with open(args.path_en_vi, "r", encoding = "utf-8") as rb:
-        data = rb.readlines()
+    # with open(args.path_en_vi, "r", encoding = "utf-8") as rb:
+    #     data = rb.readlines()
 
-    with open(args.path_idx, "r", encoding = "utf-8") as rb:
-        idx = rb.readlines()
+    # with open(args.path_idx, "r", encoding = "utf-8") as rb:
+    #     idx = rb.readlines()
 
-    with open(args.path_file, "rb") as rb:
-        js = json.load(rb)
-    vi_dict = {}
-    for i, d in enumerate(data):
-        vi_dict[idx[i].replace("\n", "")] = d
-    # print(len(vi_dict))
-    # print(idx[:10])
-    # print(list(vi_dict.keys())[:10])
-    # print(len(js["questions"]))
-    count = []
-    list_miss = []
-    for i, question in tqdm.tqdm(enumerate(js["questions"])):
-        # print(type(question["question_id"]))
-        # print(question["question_id"])
-        qid = str(question["question_id"])
-        if qid in vi_dict.keys():
-            question["question"] = vi_dict[qid]
-            count.append(qid)
-        else:
-            list_miss.append(qid)
-    print(len(count))
-    print(len(list_miss))
-    json.dump(js, open(f"{args.type_}_vi.json", "w"))
+    # with open(args.path_file, "rb") as rb:
+    #     js = json.load(rb)
+    # vi_dict = {}
+    # for i, d in enumerate(data):
+    #     vi_dict[idx[i].replace("\n", "")] = d
+    # # print(len(vi_dict))
+    # # print(idx[:10])
+    # # print(list(vi_dict.keys())[:10])
+    # # print(len(js["questions"]))
+    # count = []
+    # list_miss = []
+    # for i, question in tqdm.tqdm(enumerate(js["questions"])):
+    #     # print(type(question["question_id"]))
+    #     # print(question["question_id"])
+    #     qid = str(question["question_id"])
+    #     if qid in vi_dict.keys():
+    #         question["question"] = vi_dict[qid]
+    #         count.append(qid)
+    #     else:
+    #         list_miss.append(qid)
+    # print(len(count))
+    # print(len(list_miss))
+    # json.dump(js, open(f"{args.type_}_vi.json", "w"))
     print(list_miss)
     
         
