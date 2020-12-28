@@ -3,6 +3,7 @@ import json
 import tqdm
 import argparse
 import copy
+import numpy as np
 
 def get_data_en(path_en, path_idx):
 
@@ -86,12 +87,13 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
     data_json = read_json(path_json)
     dict_question = {}
     new_idx = copy.deepcopy(data_idx)
+    checked = np.ones((len(new_idx), 1))
     for i, i_ in enumerate(data_idx):
         if i_.replace("\n", "") not in dict_question.keys():
             dict_question[i_.replace("\n", "")] = {}
         dict_question[i_.replace("\n", "")][i] = data_en[i].replace("\n", "")
     count_check = 0
-    for question in data_json["questions"]:
+    for question in tqdm.tqdm(data_json["questions"]):
         image_id = str(question["image_id"])
         qid = question["question_id"]
         q = question["question"]
@@ -99,9 +101,9 @@ def main(path_en, path_vi, path_idx, path_json, type_ = "train"):
             for key, value in dict_question[image_id].items():
                 if check_string(q, value):
                     new_idx[int(key)] = qid
-                    count_check += 1
+                    checked[int(key)] = 0
                     break
-    print(count_check)
+    print(np.sum(checked))
     with open(f"new_vi_{type_}.txt", "w") as wr:
         for question in data_vi[:-1]:
             wr.write(question)
@@ -177,7 +179,7 @@ if __name__ == '__main__':
     # print(len(count))
     # print(len(list_miss))
     # json.dump(js, open(f"{args.type_}_vi.json", "w"))
-    print(list_miss)
+    # print(list_miss)
     
         
     
