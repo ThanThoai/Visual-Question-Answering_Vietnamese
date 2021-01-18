@@ -3,7 +3,7 @@ import torch
 
 class Optimizer(object):
     
-    def __init__(self, lr_base, optimizer, data_size, batch_size, warmup_epoch):
+    def __init__(self, lr_base, optimizer, data_size, batch_size):
         
         self.optimizer = optimizer
         self._step = 0
@@ -61,7 +61,6 @@ def optim(__C, model, data_size, lr_base = None):
         data_size,
         __C.BATCH_SIZE
     )
-    return optim
 
 def adjust_lr(optim, decay_r):
     optim.lr_base *= decay_r
