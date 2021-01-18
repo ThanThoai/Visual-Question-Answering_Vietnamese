@@ -17,7 +17,9 @@ import h5py, glob, json, cv2, argparse
 import numpy as np
 
 # spatial features
-def process_question_features():
+def process_question_features(json_file):
+    with open(json_file, 'r') as f:
+        data = json.load(f)
     pass 
 
 
