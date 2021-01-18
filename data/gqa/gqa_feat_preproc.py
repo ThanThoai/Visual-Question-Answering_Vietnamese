@@ -17,6 +17,10 @@ import h5py, glob, json, cv2, argparse
 import numpy as np
 
 # spatial features
+def process_question_features():
+    pass 
+
+
 def process_spatial_features(feat_path, out_path):
     info_file = feat_path + '/gqa_spatial_info.json'
     try:
