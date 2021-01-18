@@ -15,12 +15,97 @@ python gqa_feat_preproc.py --mode=object --object_dir=./objectFeatures --out_dir
 
 import h5py, glob, json, cv2, argparse
 import numpy as np
+import numpy as np
+import random
+import re
+import json
+from datetime import datetime
+import os
+from vncorenlp import VnCoreNLP
+import torch 
+from fairseq.models.roberta import RobertaModel
+from fairseq.data.encoders.fastbpe import fastBPE
+import tqdm
+from typing import List, Dict
 
 # spatial features
-def process_question_features(json_file):
-    with open(json_file, 'r') as f:
-        data = json.load(f)
-    pass 
+class Tokenizer:
+
+    def __init__(self, path = './vncorenlp/VnCoreNLP-1.1.1.jar'):
+
+        self.path = path 
+        self.rdrsegenter = VnCoreNLP(self.path, annotators="wseg", max_heap_size='-Xmx500m')
+
+    def tokenizer(self, sentences, return_string = False):
+        
+        re_sentences = self.rdrsegenter.tokenize(sentences)
+        if return_string:
+            return " ".join([s for s in re_sentences])
+        return re_sentences
+
+class BPE_BASE():
+    bpe_codes = './PhoBERT_base_fairseq/bpe.codes'
+
+class BPE_LARGE():
+    bpe_codes = "./PhoBERT_large_fairseq/bpe.codes"
+
+class Embedding:
+    
+    def __init__(self, BERT_MODEL = "BERT_BASE", write_file = True):
+        
+
+
+        self.method = BERT_MODEL
+        self.dict_model = {
+            "BERT_BASE" : {
+                "NAME" : "./PhoBERT_base_fairseq",
+                "PATH_CHECKPOINT_FILE" : "model.pt"
+            },
+
+            "BERT_LARGE" : {
+                "NAME" : "./PhoBERT_large_fairseq",
+                "PATH_CHECKPOINT_FILE" : "model.pt"
+            }
+
+        }
+        assert self.method in self.dict_model.keys(), "[ERROR] Method {} not supported!!!!".format(self.method)
+        self.pho_bert = RobertaModel(self.dict_model[self.method]["NAME"], self.dict_model[self.method]["PATH_CHECKPOINT_FILE"])
+        self.tokenize = Tokenizer()
+        self.pho_bert.eval()
+        if self.method == "BERT_BASE":
+            args = BPE_BASE()
+        else:
+            args = BPE_LARGE()
+        self.pho_bert.bpe = fastBPE(args)
+        self.embeding = {}
+        self.write_file = write_file
+
+    def run(self, data : Dict) -> None:
+        print(datetime.now().strftime("%H:%M:%S"), f"\t INFO: Extract Features using BERT: {self.method}")
+        for key, ques in tqdm.tqdm(data.items()):
+            assert key not in self.embeding.keys(), "ERROR"
+            question = self.tokenize.tokenizer(ques, return_string = True)
+            token_idx = self.pho_bert.encode(question)
+            doc = self.pho_bert.extract_features_aligned_to_words(question)
+            self.embeding[key] = {
+                "vector" : {},
+                "idx_token" : token_idx[1:-1]
+            }
+            for tok in doc[1: -1]:
+                self.embeding[key]["vector"][str(tok)] = tok.vector
+        
+        if self.write_file:
+            path = "./text"
+            print(datetime.now().strftime("%H:%M:%S"), f"\t INFO: Saving extract features to file")
+            torch.save(self.embeding, os.path.join(path, self.method + '.pt'))
+
+
+    def extract(self, question: str) -> Dict:
+        result = {}
+        doc = self.pho_bert.extract_features_aligned_to_words(self.tokenize.tokenizer(question))
+        for tok in doc[1: len(doc) - 1]:
+            result[tok] = tok.vector
+        return result
 
 
 def process_spatial_features(feat_path, out_path):
@@ -105,7 +190,7 @@ def process_object_features(feat_path, out_path):
 
 
 parser = argparse.ArgumentParser(description='gqa_h52npz')
-parser.add_argument('--mode', '-mode', choices=['object', 'spatial', 'frcn', 'grid'], help='mode', type=str)
+parser.add_argument('--mode', '-mode', choices=['object', 'spatial', 'frcn', 'grid', "text"], help='mode', type=str)
 parser.add_argument('--object_dir', '-object_dir', help='object features dir', type=str)
 parser.add_argument('--spatial_dir', '-spatial_dir', help='spatial features dir', type=str)
 parser.add_argument('--out_dir', '-out_dir', help='output dir', type=str)
@@ -121,6 +206,12 @@ print('mode:', mode)
 print('object_path:', object_path)
 print('spatial_path:', spatial_path)
 print('out_path:', out_path)
+
+if mode  == 'text':
+    path_json = ''
+    App = Embedding()
+    data = json.load(open(path_json, "rb"))
+    App.run(data)
 
 # process spatial features
 if mode in ['spatial', 'grid']:
