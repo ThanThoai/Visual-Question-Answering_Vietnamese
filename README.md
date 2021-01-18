@@ -1,4 +1,4 @@
-# OpenVQA
+<!-- # OpenVQA
 
 <div>
 	<a href="https://openvqa.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/openvqa/badge/?version=latest"/></a>
@@ -66,4 +66,4 @@ If this repository is helpful for your research or you want to refer the provide
   title = {OpenVQA},
   howpublished = {\url{https://github.com/MILVLG/openvqa}},
   year = {2019}
-}
+} -->
