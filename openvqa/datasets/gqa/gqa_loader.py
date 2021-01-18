@@ -248,25 +248,25 @@ class DataSet(BaseDataSet):
         return bbox_feat
 
 
-    def proc_ques(self, ques, token_to_ix, max_token):
-        ques_ix = np.zeros(max_token, np.int64)
+    # def proc_ques(self, ques, token_to_ix, max_token):
+    #     ques_ix = np.zeros(max_token, np.int64)
 
-        words = re.sub(
-            r"([.,'!?\"()*#:;])",
-            '',
-            ques.lower()
-        ).replace('-', ' ').replace('/', ' ').split()
+    #     words = re.sub(
+    #         r"([.,'!?\"()*#:;])",
+    #         '',
+    #         ques.lower()
+    #     ).replace('-', ' ').replace('/', ' ').split()
 
-        for ix, word in enumerate(words):
-            if word in token_to_ix:
-                ques_ix[ix] = token_to_ix[word]
-            else:
-                ques_ix[ix] = token_to_ix['UNK']
+    #     for ix, word in enumerate(words):
+    #         if word in token_to_ix:
+    #             ques_ix[ix] = token_to_ix[word]
+    #         else:
+    #             ques_ix[ix] = token_to_ix['UNK']
 
-            if ix + 1 == max_token:
-                break
+    #         if ix + 1 == max_token:
+    #             break
 
-        return ques_ix
+    #     return ques_ix
 
 
     def proc_ans(self, ans, ans_to_ix):
