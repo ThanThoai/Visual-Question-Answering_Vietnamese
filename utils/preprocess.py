@@ -20,7 +20,7 @@ def process_train(file_json, max_token):
                 dict_word[word] = len(dict_word)
                 idx[i] = len(dict_word)
         result[key] = {}
-        result[key]['question'] = ' '.join([word for word in question)
+        result[key]['question'] = ' '.join([word for word in question])
         result[key]['answer'] = data[key]['answer']
         result[key]['imageId'] = data[key]['imageId']
         result[key]['question_idx'] = idx.tolist()
