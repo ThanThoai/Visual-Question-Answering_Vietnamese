@@ -1,5 +1,3 @@
-spacy >= 2.0.18
-numpy >= 1.16.2
-
-
-
+vncorenlp
+fairseq
+fastBPE
