@@ -36,7 +36,8 @@ def get_text(file_json):
     with open("idx_en.txt", "w") as iw:
         with open("word_en.txt", 'w') as wr:
             for w in data.keys():
-                iw.write(f"{data[w]} \n")
+                print(w)
+                # iw.write(f"{data[w]} \n")
                 wr.write(w + "\n")
 
 def merge_text(file_en, file_vi, file_id):
