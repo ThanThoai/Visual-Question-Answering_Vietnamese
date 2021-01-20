@@ -33,12 +33,12 @@ def get_text(file_json):
     data = json.load(open(file_json, 'r'))
 
     max_l = len(data)
-    with open("idx_en.txt", "w") as iw:
-        with open("word_en.txt", 'w') as wr:
-            for w in data.keys():
-                print(w)
-                # iw.write(f"{data[w]} \n")
-                wr.write(w + "\n")
+    # with open("idx_en.txt", "w") as iw:
+    with open("word_en.txt", 'w') as wr:
+        for w in data.keys():
+            print(w)
+            # iw.write(f"{data[w]} \n")
+            wr.write(w + "\n")
 
 def merge_text(file_en, file_vi, file_id):
     max_size = 1833
