@@ -36,7 +36,7 @@ def get_text(file_json):
     with open("idx_en.txt", "w") as iw:
         with open("word_en.txt", 'w') as wr:
             for w, i  in data.items():
-                iw.write(i + "\n")
+                iw.write(int(i) + "\n")
                 wr.write(w + "\n")
 
 def merge_text(file_en, file_vi, file_id):
@@ -49,6 +49,6 @@ def merge_text(file_en, file_vi, file_id):
     for i in range(len(data_en)):
         result[data_en[i]] = {}
         result[data_en[i]]['vi'] = data_vi[i]
-        result[data_en[i]]['id'] = data_id[i]
+        result[data_en[i]]['id'] = int(data_id[i])
 
     json.dump(result, open("answer_word.json", 'w'))
